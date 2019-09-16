@@ -1,0 +1,31 @@
+(*
+    until => executa o estado em que está e transiciona para outro estado
+    unless => transiciona para outro estado e executa o novo estado
+*)
+
+node delayable(s,e,c: bool) returns (sta,pow:bool)
+let
+    automaton (* maquina de lavar 10/10*)
+     state off do
+         s=false e = false; c=false;
+     unless s then water fill 
+            s then washing
+     state standby do
+        e = true;  c= false;
+     unless c then washing
+     state washing do
+        e = true; 
+     unless e then rinse
+     state rinse do
+	e=true;
+     unless e then spin
+     state spin
+	e=true;
+     unless e then off
+    end 
+tel
+
+node onetask(s,e,c: bool) returns (sta,pow: bool)
+let
+    (s,e,c) = inlined delayable(sta,pow);
+tel

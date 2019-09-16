@@ -1,0 +1,26 @@
+node delayble(up1,up2,c1,c2,down1,down2: bool) returns(state,power:bool)
+let
+	automaton
+	 state Off do
+	  state=0; power=0
+	 unless up1 or not c1
+	 state Frostprotection do 
+	  state=1; power=300
+	 unless up1 & c1 Eco|
+	 unless up2 & c2 High|
+	 unless down1 or not c1
+	  state Eco do
+	  state=2; power=1500
+	 unless down1 or not c1
+	 unless up2 & c2
+	  state High do
+	   state=3; power=2000
+	  unless down1 or not c1
+	  unless down2 or not c2
+	 end
+tel
+
+node onetesk(up1,up2,c1,c2,down1,down2: bool) returns (state,power)
+let 
+	(state,power) = inlined delayble(up1,up2,down1,down2,c1,c2:bool);
+let

@@ -1,0 +1,21 @@
+node controll(ecoi,comforti: bool) return(eco,comfort,pl: int)
+let
+ automaton
+  state Minimalsafety do
+  	eco=false; comfort=false; pl=3000;
+  unless ecoi then Eco 
+  state Eco do
+  	eco=true; comfort=false; pl=5000;
+  unless comforti then Comfort
+  unless not ecoi then Minimalsafety
+  state Comfort do
+   eco=false; comfort=true; pl= 7000;
+  unless not comforti then Minimalsafety
+  unless ecoi then Eco
+  end
+tel
+
+node controll(ecoi,comforti: bool) return(eco,comfort,pl: int)
+let 
+	(eco,comfort,pl) = inlined controll(ecoi,comforti)
+let

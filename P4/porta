@@ -1,0 +1,13 @@
+node door(c,puch: bool) return(open: bool)
+let
+	automaton(*Porta dos monstros SA*)
+	state Closed do
+	 open= false
+	unless push & c then Open
+	state Open do 
+	open=true
+	unless push or not c door then Closed
+node onetask(c,puch:bool) returns (open:bool)
+let
+	(open)= inlined delayble(c,puch);
+tel
