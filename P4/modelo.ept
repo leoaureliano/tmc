@@ -1,0 +1,76 @@
+node radiator(up1,up2,c1,c2,down1,down2: bool) returns(st,power:int)
+let
+	automaton
+	 state Off do
+	  st=0; 
+	  power=0;
+	 unless up1 or not c1 then Frostprotection
+	 
+	 state Frostprotection do 
+	  st=1; 
+	  power=300;
+	 unless up1 & c1 then Eco |
+	  		up2 & c2 then High |
+	 		down1 or not c1 then Off
+	 
+	 state Eco do
+	  st=2; 
+	  power=1500;
+	 unless down1 or not c1 then Frostprotection |
+	 		up2 & c2 then High
+	 
+	 state High do
+	   st=3; 
+	   power=2000;
+	  unless down1 or not c1 then Eco |
+	  		 down2 or not c2 then Frostprotection
+	 end
+tel
+
+node door(c,push: bool) returns (dopen: bool)
+let
+	automaton
+	 state Closed do
+	 	dopen= false;
+	 unless push & c then Open
+	
+	 state Open do 
+	 	dopen=true;
+	 unless push or not c then Closed
+	
+	end
+tel
+
+node room(presence:bool) returns(roomoc:bool)
+let
+	automaton
+
+		state Empty do
+			roomoc=false;
+		unless presence then Ocupied
+
+		state Ocupied do
+			roomoc=true;
+		unless  not presence then Empty
+
+
+	end
+tel
+
+node main(presence,up1,up2,down1,down2,push_d,push_w: bool) returns (st,power: int; dopen,wopen,roomoc: bool)
+contract
+	var rule2,rule3,rule1: bool;
+	let
+		(* not presence => not (dopen or wopen) *)
+		rule2 = not (not roomoc) or (not (dopen or wopen));
+		(* (dopen or wopen) => st < 2 *)
+		rule3 = not (dopen or wopen) or (st < 2);
+	tel	
+	enforce (rule2 & rule3)
+	with (c_d,c_w,c1,c2:bool)
+let 
+	(st,power) = inlined radiator(up1,up2,c1,c2,down1,down2);
+	roomoc = inlined room(presence);
+	dopen = inlined door(c_d,push_d);
+	wopen = inlined door(c_w,push_w);
+tel
